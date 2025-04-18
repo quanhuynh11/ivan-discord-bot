@@ -15,7 +15,7 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Ignore messages from bots
 
     // Command: !ping
@@ -37,8 +37,18 @@ client.on('messageCreate', (message) => {
         });
     }
 
+    // Command: !who
     if (message.content === '!who') {
         message.reply('I am Ivan, the real one!');
+    }
+
+    // Command: !quote
+    // returns an anime quote from animechan
+    if (message.content === '!quote') {
+        const response = await fetch('https://api.animechan.io/v1/quotes/random');
+        const data = await response.json();
+        // console.log(data);
+        message.reply(`Quote: "${data.data.content}" \nAnime: -${data.data.anime.name}-`);
     }
 });
 
