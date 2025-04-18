@@ -18,6 +18,10 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Ignore messages from bots
 
+    if (message.content === '!help') {
+        message.reply('Commands: \n!ping \n!who \n!quote \n!randomAK');
+    }
+
     // Command: !ping
     if (message.content === '!ping') {
         // Respond with "Pong!", and response time
@@ -45,10 +49,22 @@ client.on('messageCreate', async (message) => {
     // Command: !quote
     // returns an anime quote from animechan
     if (message.content === '!quote') {
-        const response = await fetch('https://api.animechan.io/v1/quotes/random');
-        const data = await response.json();
-        // console.log(data);
-        message.reply(`Quote: "${data.data.content}" \nAnime: -${data.data.anime.name}-`);
+        try {
+            const response = await fetch('https://api.animechan.io/v1/quotes/random');
+
+            if(!response.ok) {
+                message.reply('Failed to fetch quote, we probably got rate limited.');
+                throw new Error('Failed to fetch quote.');
+            }
+
+            const data = await response.json();
+            // console.log(data);
+            message.reply(`Quote: "${data.data.content}" \nAnime: -${data.data.anime.name}-`);
+        }
+        catch (error) {
+            console.error(error);
+            return;
+        }
     }
 
     // Command: !randomAK
