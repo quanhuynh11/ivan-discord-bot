@@ -2,6 +2,7 @@ require('dotenv').config();
 
 // bot.js
 const { Client, GatewayIntentBits } = require('discord.js');
+const { exec } = require('child_process');
 
 const client = new Client({
     intents: [
