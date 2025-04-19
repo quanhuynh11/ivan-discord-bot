@@ -150,7 +150,7 @@ client.on('messageCreate', async (message) => {
 
             // Check if there was an error, if so, edit the reply
             if (error) {
-                reply.edit('Something broke');
+                reply.edit('Something broke' + error);
                 return;
             }
 
@@ -159,7 +159,7 @@ client.on('messageCreate', async (message) => {
                 exec(`docker inspect pixelmon --tail 50`, (error, stdout, stderr) => {
                     if (error) {
                         clearInterval(interval);
-                        reply.edit('Something broke');
+                        reply.edit('Something broke' + error);
                         return;
                     }
 
