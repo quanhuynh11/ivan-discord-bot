@@ -53,7 +53,7 @@ client.on('messageCreate', async (message) => {
         try {
             const response = await fetch('https://api.animechan.io/v1/quotes/random');
 
-            if(!response.ok) {
+            if (!response.ok) {
                 message.reply('Failed to fetch quote, we probably got rate limited.');
                 throw new Error('Failed to fetch quote.');
             }
@@ -105,16 +105,16 @@ client.on('messageCreate', async (message) => {
 
             // Get a random character by index
             const randomCharacter = data[Math.floor(Math.random() * data.length)];
-    
+
             const embed = {
                 title: randomCharacter.name,
                 description: randomCharacter.biography,
             };
-    
+
             // console.log(embed);
             // console.log(star);
             // console.log(tags);
-    
+
             message.channel.send({ embeds: [embed] });
 
         }
@@ -126,7 +126,7 @@ client.on('messageCreate', async (message) => {
 
     // Command: !status pixelmon
     // checks if the pixelmon server is running
-    if(message.content === '!status pixelmon') {
+    if (message.content === '!status pixelmon') {
         exec(`docker inspect -f '{{.State.Running}}' pixelmon`, (error, stdout, stderr) => {
             if (error) {
                 message.reply('Something broke');
@@ -140,10 +140,10 @@ client.on('messageCreate', async (message) => {
 
     // Command: !restart pixelmon
     // restarts the pixelmon server
-    if(message.content === '!restart pixelmon') {
+    if (message.content === '!restart pixelmon') {
 
         // Run the restart command
-        exec('docker restart pixelmon', async (error, stdout, stderr) => {
+        exec('docker restart pixelmon', async (error) => {
 
             // Save the reply to be edited later
             const reply = await message.reply('Restarting Pixelmon...');
@@ -154,17 +154,17 @@ client.on('messageCreate', async (message) => {
                 return;
             }
 
-            // Check the logs every 5 seconds for the "Done" message
+            // Check the logs every 5 seconds for the "healthly" message
             const interval = setInterval(() => {
-                exec(`docker logs pixelmon --tail 50`, (error, stdout, stderr) => {
+                exec(`docker inspect -f '{{.State.Health.Status}}' pixelmon`, (error, stdout) => {
                     if (error) {
                         clearInterval(interval);
                         reply.edit('Something broke');
                         return;
                     }
 
-                    // Check if the "Done" message is in the logs, if so, edit the reply
-                    if (stdout.includes('[minecraft/DedicatedServer]: Done')) {
+                    const status = stdout.trim();
+                    if (status === 'healthy') {
                         clearInterval(interval);
                         reply.edit('Restarting Pixelmon... Done! Server is joinable!');
                     }
