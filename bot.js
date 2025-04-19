@@ -3,7 +3,6 @@ require('dotenv').config();
 // bot.js
 const { Client, GatewayIntentBits } = require('discord.js');
 const { exec } = require('child_process');
-const { clear } = require('console');
 
 const client = new Client({
     intents: [
@@ -144,10 +143,10 @@ client.on('messageCreate', async (message) => {
     if(message.content === '!restart pixelmon') {
 
         // Run the restart command
-        exec('docker restart pixelmon', (error, stdout, stderr) => {
+        exec('docker restart pixelmon', async (error, stdout, stderr) => {
 
             // Save the reply to be edited later
-            const reply = message.reply('Restarting Pixelmon...');
+            const reply = await message.reply('Restarting Pixelmon...');
 
             // Check if there was an error, if so, edit the reply
             if (error) {
