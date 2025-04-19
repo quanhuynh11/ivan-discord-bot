@@ -3,6 +3,7 @@ require('dotenv').config();
 // bot.js
 const { Client, GatewayIntentBits } = require('discord.js');
 const { exec } = require('child_process');
+const { clear } = require('console');
 
 const client = new Client({
     intents: [
@@ -135,6 +136,41 @@ client.on('messageCreate', async (message) => {
 
             const isRunning = stdout.trim() === 'true';
             message.reply(`The Pixelmon server is ${isRunning ? 'running' : 'not running'}`);
+        });
+    }
+
+    // Command: !restart pixelmon
+    // restarts the pixelmon server
+    if(message.content === '!restart pixelmon') {
+
+        // Run the restart command
+        exec('docker restart pixelmon', (error, stdout, stderr) => {
+
+            // Save the reply to be edited later
+            const reply = message.reply('Restarting Pixelmon...');
+
+            // Check if there was an error, if so, edit the reply
+            if (error) {
+                reply.edit('Something broke');
+                return;
+            }
+
+            // Check the logs every 5 seconds for the "Done" message
+            const interval = setInterval(() => {
+                exec(`docker inspect pixelmon --tail 50`, (error, stdout, stderr) => {
+                    if (error) {
+                        clearInterval(interval);
+                        reply.edit('Something broke');
+                        return;
+                    }
+
+                    // Check if the "Done" message is in the logs, if so, edit the reply
+                    if (stdout.includes('Done')) {
+                        clearInterval(interval);
+                        reply.edit('Restarting Pixelmon... Done! Server is joinable!');
+                    }
+                });
+            }, 5000); // 5 second check interval
         });
     }
 });
