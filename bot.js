@@ -121,7 +121,20 @@ client.on('messageCreate', async (message) => {
             console.error(error);
             return;
         }
+    }
 
+    // Command: !status pixelmon
+    // checks if the pixelmon server is running
+    if(message.content === '!status pixelmon') {
+        exec(`docker inspect -f '{{.State.Running}}' pixelmon`, (error, stdout, stderr) => {
+            if (error) {
+                message.reply('Something broke');
+                return;
+            }
+
+            const isRunning = stdout.trim() === 'true';
+            message.reply(`The Pixelmon server is ${isRunning ? 'running' : 'not running'}`);
+        });
     }
 });
 
