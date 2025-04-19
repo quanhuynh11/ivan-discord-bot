@@ -164,7 +164,7 @@ client.on('messageCreate', async (message) => {
                     }
 
                     // Check if the "Done" message is in the logs, if so, edit the reply
-                    if (stdout.includes('Done')) {
+                    if (stdout.includes('[minecraft/DedicatedServer]: Done')) {
                         clearInterval(interval);
                         reply.edit('Restarting Pixelmon... Done! Server is joinable!');
                     }
