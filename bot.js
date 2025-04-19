@@ -150,16 +150,16 @@ client.on('messageCreate', async (message) => {
 
             // Check if there was an error, if so, edit the reply
             if (error) {
-                reply.edit('Something broke' + error);
+                reply.edit('Something broke');
                 return;
             }
 
             // Check the logs every 5 seconds for the "Done" message
             const interval = setInterval(() => {
-                exec(`docker inspect pixelmon --tail 50`, (error, stdout, stderr) => {
+                exec(`docker logs pixelmon --tail 50`, (error, stdout, stderr) => {
                     if (error) {
                         clearInterval(interval);
-                        reply.edit('Something broke' + error);
+                        reply.edit('Something broke');
                         return;
                     }
 
