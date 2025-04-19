@@ -19,6 +19,17 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Ignore messages from bots
 
+    const authorizedUser = ['your_user_id', 'your_other_user_id'];
+    // Ignore messages from unauthorized users
+    /**
+     * Create a list of authorized users
+     * Add your user ID to the list
+     */
+    if (!authorizedUser.includes(message.author.id)) {
+        message.reply('You are not authorized to use this bot.');
+        return;
+    }
+
     if (message.content === '!help') {
         message.reply('Commands: \n!ping \n!who \n!quote \n!randomAK');
     }
