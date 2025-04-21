@@ -4,6 +4,8 @@ require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const { exec } = require('child_process');
 
+const goofy_responses = require('./goofy_responses.json');
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -19,19 +21,63 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Ignore messages from bots
 
-    const authorizedUser = ['your_user_id', 'your_other_user_id'];
-    // Ignore messages from unauthorized users
-    /**
-     * Create a list of authorized users
-     * Add your user ID to the list
-     */
-    if (!authorizedUser.includes(message.author.id)) {
-        message.reply('You are not authorized to use this bot.');
-        return;
-    }
+    // reply to everyone with a silly response from the goofy_responses.json
+    // if (process.env.ALLOWED_DISCORD_IDS.includes(message.author.id)) {
+    //     const randomResponse = goofy_responses.goofy_responses[Math.floor(Math.random() * goofy_responses.goofy_responses.length)];
+    //     message.reply(randomResponse);
+    // }
+
+    // const authorizedUser = ['your_user_id', 'your_other_user_id'];
+    // // Ignore messages from unauthorized users
+    // /**
+    //  * Create a list of authorized users
+    //  * Add your user ID to the list
+    //  */
+    // if (!authorizedUser.includes(message.author.id)) {
+    //     message.reply('You are not authorized to use this bot.');
+    //     return;
+    // }
 
     if (message.content === '!help') {
-        message.reply('Commands: \n!ping \n!who \n!quote \n!randomAK');
+        message.reply('Commands: \n!ping \n!who \n!quote \n!randomAK \n!rps');
+    }
+
+    // Command: !rps
+    // Simple rock paper scissors
+    // ex: !rps rock
+    if(message.content.startsWith('!rps')) {
+
+        const responses = ['rock', 'paper', 'scissors'];
+
+        // Get the arg from the user
+        const arg = message.content.split(' ')[1];
+
+        if (!arg.contains(responses)) {
+            message.reply('Invalid argument. Usage: !rps [rock, paper, scissors]');
+            return;
+        }
+
+        // Get a random response
+        const response = responses[Math.floor(Math.random() * responses.length)];
+
+        // Respond with the response
+        message.reply(`I choose ${response}`);
+
+        if (arg === response) {
+            message.reply('Tie!');
+        }
+        else if (arg === 'rock' && response === 'scissors') {
+            message.reply('You win!');
+        }
+        else if (arg === 'paper' && response === 'rock') {
+            message.reply('You win!');
+        }
+        else if (arg === 'scissors' && response === 'paper') {
+            message.reply('You win!');
+        }
+        else {
+            message.reply('You lose!');
+        }
     }
 
     // Command: !ping
